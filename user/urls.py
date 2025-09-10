@@ -1,1 +1,8 @@
-# write your code here
+from django.urls import path, include
+from rest_framework import routers
+
+urlpattern = [
+    
+]
+
+app_name = "user"

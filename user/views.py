@@ -1,1 +1,1 @@
-# write your code here
+from user.models import User

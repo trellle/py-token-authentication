@@ -148,10 +148,16 @@ class OrderView(generics.ListCreateAPIView):
         return Order.objects.filter(user=self.request.user)
 
     def get_serializer_class(self):
-        if self.request.method == "list":
+        if self.request.method == "GET":
             return OrderListSerializer
 
         return OrderSerializer
+
+    def has_permission(self, request, view):
+        if self.request.method == "POST":
+            return (IsAuthenticated(),)
+        else:
+            return (IsAdminOrIfAuthenticatedReadOnly(),)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)

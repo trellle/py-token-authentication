@@ -81,13 +81,13 @@ class MovieView:
 
 class MovieListView(generics.ListCreateAPIView, MovieView):
     queryset = Movie.objects.prefetch_related("genres", "actors")
-    serializer_class = MovieSerializer
+    serializer_class = MovieListSerializer
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
 
 class MovieDetailView(generics.GenericAPIView, RetrieveModelMixin, MovieView):
     queryset = Movie.objects.prefetch_related("genres", "actors")
-    serializer_class = MovieSerializer
+    serializer_class = MovieDetailSerializer
     permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get(self, request, *args, **kwargs):
@@ -143,6 +143,7 @@ class OrderView(generics.ListCreateAPIView):
     )
     serializer_class = OrderSerializer
     pagination_class = OrderPagination
+    permission_classes = (IsAdminOrIfAuthenticatedReadOnly,)
 
     def get_queryset(self):
         return Order.objects.filter(user=self.request.user)
@@ -152,12 +153,6 @@ class OrderView(generics.ListCreateAPIView):
             return OrderListSerializer
 
         return OrderSerializer
-
-    def has_permission(self, request, view):
-        if self.request.method == "POST":
-            return (IsAuthenticated(),)
-        else:
-            return (IsAdminOrIfAuthenticatedReadOnly(),)
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
